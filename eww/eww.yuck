@@ -1,0 +1,99 @@
+;; Window Definition
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "38px"
+                      :height "100%"
+                      :anchor "left center")
+  :reserve (struts :side "left" :distance "40px")
+  (bar-layout))
+
+;; Main Layout
+(defwidget bar-layout []
+  (centerbox :orientation "v"
+             :class "bar-class"
+    (workspaces)
+    (time-module)
+    (bottom-stuff)))
+
+;; Top: Workspaces
+(defwidget workspaces []
+  (box :class "workspaces"
+       :orientation "v"
+       :space-evenly false
+       :valign "start"
+       :halign "center"
+       :spacing 5
+    (button :onclick "wmctrl -s 0" "⬢")
+    (button :onclick "wmctrl -s 1" "⬢")
+    (button :onclick "wmctrl -s 2" "⬢")
+    (button :onclick "wmctrl -s 3" "⬢")
+    (button :onclick "wmctrl -s 4" "⬢")
+    (button :onclick "wmctrl -s 5" "⬢")
+    (button :onclick "wmctrl -s 6" "⬢")
+    (button :onclick "wmctrl -s 7" "⬢")
+    (button :onclick "wmctrl -s 8" "⬢")
+    (button :onclick "wmctrl -s 9" "⬢")))
+
+;; Middle: Time
+(defwidget time-module []
+  (box :class "time-box"
+       :orientation "v"
+       :space-evenly false
+       :valign "center"
+       :halign "center"
+    (label :text {formattime(EWW_TIME, "%H")})
+    (label :text {formattime(EWW_TIME, "%M")} :class "time-min")
+    (label :text {formattime(EWW_TIME, "%d")})
+    (label :text {formattime(EWW_TIME, "%b")} :class "date-month")
+    ))
+
+;; Bottom: System Metrics, WiFi & Power
+(defwidget bottom-stuff []
+  (box :class "sidestuff"
+       :orientation "v"
+       :space-evenly false
+       :valign "end"
+       :halign "center"
+       :spacing 1
+
+    ;; 1. Resource Metrics
+    (metric :label "󰕾" :value volume :onchange "amixer -D pulse sset Master {}%")
+    (metric :label {EWW_BATTERY == "" ? "󰚥" : "󰁹"}
+            :value {EWW_BATTERY == "" ? 0 : EWW_BATTERY["BAT0"].capacity}
+            :onchange "")
+    (metric :label "󰍛" :value {EWW_RAM.used_mem_perc} :onchange "")
+    (metric :label "󰋊" :value {round((1 - (EWW_DISK["/"].free / EWW_DISK["/"].total)) * 100, 0)} :onchange "")
+
+    ;; 2. WiFi Module (Now before Logout)
+    (button :class "net-box"
+            :onclick "kitty -e nmtui &"
+            :tooltip "${wlan_name}"
+      (label :class "metric-icon" :text {net_status == "connected" ? "󰖩 " : "󰖪 "}))
+
+    ;; 3. Logout Module (At the very bottom)
+    (button :class "logout-btn"
+            :onclick "wlogout &"
+            :timeout "2000ms" "󰐥 ")))
+
+;; Reusable Metric Component
+(defwidget metric [label value onchange]
+  (box :orientation "v"
+       :class "metric"
+       :space-evenly false
+       :spacing 3
+    (label :class "metric-icon" :text label)
+    (scale :min 0
+           :max 101
+           :orientation "v"
+           :flipped true
+           :active {onchange != ""}
+           :value value
+           :onchange onchange)))
+
+;; Variables & Polls
+(defpoll volume :interval "1s" "scripts/getvol")
+(defpoll net_status :interval "5s" "nmcli -t -f STATE g | grep -q 'connected' && echo 'connected' || echo 'disconnected'")
+(defpoll wlan_name :interval "10s" "nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d: -f2 || echo 'Offline'")

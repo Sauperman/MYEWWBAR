@@ -1,0 +1,104 @@
+// Tokyo Mocha Color Palette Refined
+$bg: #000000;
+$fg: #c0caf5;
+$purple: #bb9af7;
+$light-purple: #9aa5ce; // New light purple color for unhovered state
+$magenta: #ff007c;
+$cyan: #7dcfff;
+$black: #15161e;
+$surface: #24283b;
+$green: #9ece6a;
+$red: #f7768e;
+
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+}
+
+.bar-class {
+  background-color: $bg;
+  border-right: 2px solid $black;
+}
+
+// Top Section
+.workspaces {
+  padding-top: 15px;
+
+  button {
+    font-size: 18px;
+    color: $light-purple; // Applied light purple here
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $magenta;
+      text-shadow: 0px 0px 5px rgba($magenta, 0.5);
+    }
+  }
+}
+
+// Middle Section
+.time-box {
+  font-weight: bold;
+  font-size: 18px;
+  color: $fg;
+
+  .time-min {
+    color: $magenta;
+  }
+  .date-month {
+    color: $magenta;
+  }
+}
+
+// Bottom Section
+.sidestuff {
+  padding-bottom: 20px;
+}
+
+.metric {
+  margin-bottom: 1px;
+
+  .metric-icon {
+    font-size: 16px;
+    color: $cyan;
+    margin-bottom: 5px;
+  }
+
+  scale trough {
+    background-color: $surface;
+    border-radius: 6px;
+    min-width: 8px;
+    min-height: 29px;
+
+    highlight {
+      background-image: linear-gradient(to top, $purple, $magenta);
+      border-radius: 6px;
+    }
+  }
+}
+
+.net-box {
+  margin-top: 5px;
+
+  .metric-icon {
+    color: $green;
+    font-size: 19px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $cyan;
+    }
+  }
+}
+
+.logout-btn {
+  font-size: 22px;
+  color: $red;
+  margin-top: 5px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: lighten($red, 15%);
+    text-shadow: 0px 0px 8px rgba($red, 0.4);
+  }
+}
